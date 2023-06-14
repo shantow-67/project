@@ -8,14 +8,15 @@ exports.registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body
         // name,email require
+        
         if (!name || !email) {
             res.status(401).json("Name and Email require")
         }
-
+// password check
         if (!password || password.length < 6) {
             res.status(401).json("password must contain more then 6 charecter")
         }
-        // check if user exist
+// check if user exist
         const existingUser = await User.findOne({ email })
         
         if (existingUser) {
@@ -23,11 +24,11 @@ exports.registerUser = async (req, res) => {
         }
 
 
-        console.log("line 26---ok");
+
         //   hashing pass
         const hsspass = await hashPassword(password);
 
-        console.log("line 30---okk");
+       
         // register user 
 
         const user = await new User({
@@ -72,6 +73,8 @@ exports.loginUser = async (req, res) => {
 // compare password
         const match = comparePassword(password, user.password);
 
+        
+console.log(match);
         if (!match) {
             res.status(401).json("Wrong password or email")
         }

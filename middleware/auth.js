@@ -4,14 +4,10 @@ const User = require('../model/userModel')
 
 exports.requireSignin = (req, res,next) => {
     try {
-        const decode = jwt.verify(req.headers.authorization,
-           "secret_key"
-        )
-         
-     
+        const decode = jwt.verify(req.headers.authorization,"secret_key")
+   
         req.user = decode
-            
-
+     
         next()
     } catch (error) {
         console.log(error.message);

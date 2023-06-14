@@ -12,7 +12,7 @@ router.get("/auth-check", requireSignin, (req, res) => {
 })
 
 router.get("/isAdmin", requireSignin, isAdmin, (req, res) => {
-    res.json("yess  Admin")
+    res.status(200).json({message : "Admin authentication done"})
 })
 
 
