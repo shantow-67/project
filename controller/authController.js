@@ -1,5 +1,5 @@
 const User = require("../model/userModel")
-const hashPassword = require("../helper/auth")
+const {hashPassword,comparePassword} = require("../helper/auth")
 const jwt = require('jsonwebtoken')
 
 
@@ -36,7 +36,7 @@ exports.registerUser = async (req, res) => {
             password: hsspass
         }).save();
 
-        const token = jwt.sign({ _id: user._id }, "secret_key", expiresIn("2h"))
+        const token = jwt.sign({ _id: user._id }, "secret_key", {expiresIn:"2h"})
         
 
         res.status(200).json({
@@ -48,6 +48,46 @@ exports.registerUser = async (req, res) => {
 
 
     } catch (error) {
-       console.log(error)
+       console.log(error.message)
+    }
+}
+
+
+// login controller
+
+exports.loginUser = async (req, res) => {
+    try {
+
+        const { email, password } = req.body
+        
+        if (!email || !password) {
+              res.status(401).json("Email and password require")
+        }
+  // find user from model
+        const user = await User.findOne({ email })
+        
+        if (!user) {
+             res.status(401).json("User not found")
+        }
+// compare password
+        const match = comparePassword(password, user.password);
+
+        if (!match) {
+            res.status(401).json("Wrong password or email")
+        }
+// create token
+        const token = jwt.sign({_id:user._id},"secret_key",{expiresIn:"2h"})
+
+// send response
+        res.status(200).json({
+            user: {
+                name: user.name,
+                email:user.email
+            },token
+        })
+
+
+    } catch (error) {
+        console.log(error.message);
     }
 }

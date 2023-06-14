@@ -18,6 +18,10 @@ const userSchema = new Schema(
             type: String,
             required: true,
         },
+        roll: {
+            type: Number,
+            default:1
+        }
     },
     {timestamps: true, versionKey: false}
 );
