@@ -21,6 +21,9 @@ const userSchema = new Schema(
         roll: {
             type: Number,
             default:1
+        },
+        address: {
+            type:String
         }
     },
     {timestamps: true, versionKey: false}

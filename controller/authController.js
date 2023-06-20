@@ -1,5 +1,7 @@
 const User = require("../model/userModel")
+// default export/named export
 const {hashPassword,comparePassword} = require("../helper/auth")
+
 const jwt = require('jsonwebtoken')
 
 
@@ -92,5 +94,45 @@ console.log(match);
 
     } catch (error) {
         console.log(error.message);
+    }
+}
+
+
+exports.secret = async (req, res) => {
+    console.log(req.user);
+    res.json({
+        currentUser: req.user,
+        message:"Admin succesfully in Controll"
+    })
+}
+
+
+exports.updateProfile = async (req, res) => {
+    try {
+        const { name, password ,address} = req.body
+        const user = await User.findById(req.user._id)
+        
+        // check password length
+        if (password && password.length < 6) {
+            return res.status(200).json({
+                error :"password is require and should be minimum charecter of 6"
+            })
+        }
+      
+        const hashedPassword = password ? await hashPassword(password) : undefined
+        const updated = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                name: name || user.name,
+                password: hashedPassword || user.password,
+                address: address || user.address
+            },
+            {new:true}  
+        )
+        updated.password = undefined;
+        updated.roll = undefined;
+        res.json(updated)       
+    } catch (error) {
+        res.status(400).json({status:"update failed",data:error.message})
     }
 }
