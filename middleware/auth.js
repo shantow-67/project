@@ -18,9 +18,7 @@ exports.isAdmin = async (req, res,next) => {
   try {
     
       const user = await User.findById(req.user._id)
-      
-      console.log("passssss");
-      
+            
     if (user.roll !== 1) {
         res.json("unauthorize")
     }

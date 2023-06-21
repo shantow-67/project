@@ -24,13 +24,9 @@ exports.registerUser = async (req, res) => {
         if (existingUser) {
               res.status(401).json("Email is already exist")
         }
-
-
-
         //   hashing pass
         const hsspass = await hashPassword(password);
-
-       
+   
         // register user 
 
         const user = await new User({
@@ -41,7 +37,6 @@ exports.registerUser = async (req, res) => {
 
         const token = jwt.sign({ _id: user._id }, "secret_key", {expiresIn:"2h"})
         
-
         res.status(200).json({
             user: {
                 name: user.name,
@@ -54,7 +49,6 @@ exports.registerUser = async (req, res) => {
        console.log(error.message)
     }
 }
-
 
 // login controller
 
@@ -81,7 +75,7 @@ console.log(match);
             res.status(401).json("Wrong password or email")
         }
 // create token
-        const token = jwt.sign({_id:user._id},"secret_key",{expiresIn:"2h"})
+        const token = jwt.sign({_id:user._id},"secret_key",{expiresIn:"1d"})
 
 // send response
         res.status(200).json({
@@ -97,7 +91,6 @@ console.log(match);
     }
 }
 
-
 exports.secret = async (req, res) => {
     console.log(req.user);
     res.json({
@@ -105,7 +98,6 @@ exports.secret = async (req, res) => {
         message:"Admin succesfully in Controll"
     })
 }
-
 
 exports.updateProfile = async (req, res) => {
     try {
