@@ -122,18 +122,18 @@ exports.update = async (req, res) => {
             case photo && photo.size > 1000000:
                 return res.json({ error: "Image should be less than 1mb in size" }); 
         }
-
-        const product = await productModel.findByIdAndUpdate(req.params.prodyctId,
+console.log("125===>",req.params);
+        const product = await productModel.findByIdAndUpdate(req.params.productId,
             { ...req.fields, slug: slugify(name) },
             { new: true })
         
-        // console.log(product);
+        console.log(product);
         
         // This line execute well
-        console.log(req.files);
+        // console.log(req.files);
       
         if (photo) {
-            console.log("line 136====",product);
+            // console.log("line 136====",product);
             //   below this line code is not working
             product.photo.data = fs.readFileSync(photo.path);
             // upper this line code is not working
