@@ -141,3 +141,85 @@ exports.update = async (req, res) => {
      }
 }
 
+exports.filteredProduct = async (req, res) => {
+    try {
+        const { checked, radio } = req.body
+        let args ={}
+        if (checked.length > 0) args.category = checked;
+        if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+// const products = await Product.find({cagegory:"catagory id",price:{$gte:0,$lte:20000}});
+        const product = await productModel.find(args)
+        res.json(product)
+    } catch (error) {
+           res.json({ status: "filter procces failed", data: error.message })   
+    }
+}
+
+exports.productCount = async (req, res) => {
+    try {
+        const total = await productModel.find({}).estimatedDocumentCount()
+
+        res.json(total)
+
+    } catch (error) {
+        res.json({ status: "product count failed", data: error.message })   
+    }
+}
+
+exports.listProduct = async (req, res) => {
+    try {
+
+        const perPage = 2;
+        const page = req.params.page ? req.params.page : 1;
+
+        const product = await productModel.find({})
+            .select("-photo")
+            .skip((page - 1) * perPage)
+            .limit(perPage)
+            .sort({ createdAt: -1 });
+        
+        res.json(product)
+    } catch (error) {
+         res.json({ status: "List not found", data: error.message })  
+    }
+}
+
+exports.productSearch = async (req, res) => {
+    try {
+        const { keyword } = req.params;
+        const result = await productModel.find({
+            $or :[
+                { name: { $regex: keyword ,$options:"i"}},
+                { description: { $regex: keyword ,$options:"i"}}
+            ]
+        }).select("-photo")
+
+        res.json(result)
+    } catch (error) {
+         res.json({ status: "Product not found", data: error.message }) 
+    }
+}
+
+exports.relatedProduct = async (req, res) => {
+    try {
+        const { productId, categoryId } = req.params
+
+         
+        console.log(req.params);
+
+        const related = await productModel.find({
+            category: categoryId,
+            _id: { $ne: productId }
+        }).populate("category")
+            .select("-photo")
+            .limit(2);
+       
+        
+        
+        res.json(related)
+
+    } catch (error) {
+         res.json({ status: "Related Product not found", data: error.message }) 
+    }
+    
+}
