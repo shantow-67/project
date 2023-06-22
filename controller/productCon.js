@@ -125,12 +125,15 @@ exports.update = async (req, res) => {
 
         const product = await productModel.findByIdAndUpdate(req.params.prodyctId,
             { ...req.fields, slug: slugify(name) },
-              {new:true})
+            { new: true })
+        
+        // console.log(product);
         
         // This line execute well
         console.log(req.files);
       
         if (photo) {
+            console.log("line 136====",product);
             //   below this line code is not working
             product.photo.data = fs.readFileSync(photo.path);
             // upper this line code is not working
@@ -144,3 +147,4 @@ exports.update = async (req, res) => {
         res.json({status:"update failed",data:error.message})
      }
 }
+
